@@ -1,0 +1,1 @@
+{"title":"Secure Agent Runtime","panels":[{"title":"Tasks","targets":[{"expr":"sum(rate(agent_runtime_tasks_total[5m])) by (tenant,outcome)"}]},{"title":"Policy denials","targets":[{"expr":"sum(rate(agent_runtime_policy_denials_total[5m]))"}]},{"title":"Active sandboxes","targets":[{"expr":"agent_runtime_active_sandboxes"}]}]}

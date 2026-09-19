@@ -1,0 +1,5 @@
+name: restricted
+network: offline
+runtimeClass: runc-standard
+limits: {cpu: "1", memory: 1Gi, pids: 128, timeoutSeconds: 300}
+capabilities: [filesystem.read, filesystem.write, process.execute, artifact.upload]

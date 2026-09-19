@@ -1,0 +1,5 @@
+apiVersion: v2
+name: secure-agent-runtime
+description: Runtime control plane; sandbox jobs are policy-generated
+type: application
+version: 0.1.0
