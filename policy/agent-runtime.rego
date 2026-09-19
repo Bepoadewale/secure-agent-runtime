@@ -1,4 +1,7 @@
 package agent_runtime
+
+import rego.v1
+
 default allow := false
 deny contains "privileged runtime denied" if input.request.privileged
 deny contains "hostPath denied" if input.request.host_path
