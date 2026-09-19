@@ -26,8 +26,6 @@ class LocalContainerBackend(SandboxBackend):
             "ALL",
             "--security-opt",
             "no-new-privileges",
-            "--security-opt",
-            "seccomp=default",
             "--pids-limit",
             str(request.limits.pids),
             "--memory",
