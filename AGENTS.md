@@ -9,3 +9,11 @@ Commands: `make install`, `make test`, `make lint`, `make demo`, `make demo-secu
 Rules: never weaken isolation to satisfy a demo; never mount Docker socket, host credentials or broad host paths; no main pushes or secrets; fake tests do not validate Docker containment. Update factual status/backlog after work.
 
 Completion rule: do not mark **PORTFOLIO COMPLETE — LOCAL-FIRST SCOPE** unless the evidence gate in `DEFINITION_OF_DONE.md` is executed. Configuration, mocks, manifests, architecture, unit tests, and documentation do not prove sandbox containment. The central untrusted-task sandbox story must run locally; unexecuted gVisor/Firecracker/Kubernetes adapters must be explicit.
+
+## Clean-room reproducibility
+
+Clean-room reproducibility is a mandatory completion criterion. Do not mark this repository
+`PORTFOLIO COMPLETE — LOCAL-FIRST SCOPE` until a new engineer can reproduce the platform from a
+clean project state using documented commands, execute the primary and required failure demos, run
+validation, and safely tear down only this project's local resources. Do not infer reproducibility
+from an existing developer environment; execute it after project-specific cleanup.
