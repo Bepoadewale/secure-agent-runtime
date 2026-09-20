@@ -19,3 +19,11 @@
 - **PARTIALLY VALIDATED:** meaningful integrations run but core sandbox evidence is incomplete.
 - **LOCAL END-TO-END VALIDATED:** primary sandbox path runs, with material safety/recovery/observability gaps.
 - **PORTFOLIO COMPLETE — LOCAL-FIRST SCOPE:** every gate above is executed; do not omit the suffix without production validation.
+
+# Clean-Room Reproducibility Gate
+
+`PORTFOLIO COMPLETE — LOCAL-FIRST SCOPE` requires two executed clean-room cycles: clone → install → bootstrap hardened Docker runtime → smoke → fixture agent coding task/artifact demo → malicious containment/audit demo → validation → project-scoped cleanup → second clean bootstrap/demo. Planned commands: `make install`, `make bootstrap-local`, `make smoke`, `make demo-agent-task`, `make demo-containment`, `make verify`, `make clean-local`.
+
+- [ ] Clean clone/bootstrap has no hidden state; primary and failure demos pass.
+- [ ] Cleanup removes only this project and unrelated resources survive.
+- [ ] Post-cleanup absence and second bootstrap/demo are recorded in `docs/VALIDATION.md`.

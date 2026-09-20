@@ -28,3 +28,6 @@ P0 blocks PORTFOLIO COMPLETE — LOCAL-FIRST SCOPE. Do not choose P1/P2 polish w
 # P3 — Future / Cloud / Hardware
 
 - Firecracker and production Kubernetes isolation.
+# Clean-Room Completion Blocker
+
+- [ ] Pass the full clean-room reproducibility gate: deterministic bootstrap, smoke, sandbox task and containment demos, safe cleanup, a second clean bootstrap, and recorded evidence. Break this into focused P0 work only during the scheduled week.
