@@ -4,6 +4,10 @@
 
 PARTIALLY VALIDATED
 
+## Maturity Model
+
+`FOUNDATION` → `PARTIALLY VALIDATED` → `LOCAL END-TO-END VALIDATED` → `PORTFOLIO COMPLETE — LOCAL-FIRST SCOPE`.
+
 ## Executed and Verified
 
 - Fake-backend task lifecycle and security policy tests.
@@ -27,6 +31,15 @@ PARTIALLY VALIDATED
 ## Current P0 Objective
 
 Execute an agent task in the hardened Docker backend and verify containment/cleanup.
+
+## Completion Blockers
+
+- Hardened Docker execution, real fixture task, containment, network policy, secret broker, and lifecycle cleanup have not executed.
+- Exfiltration/injection, audit persistence, timeout/reaper recovery, and runtime observability need live evidence.
+
+## Explicitly Unexecuted Production Adapters
+
+- gVisor, Firecracker, production Kubernetes isolation, and enterprise secret systems.
 
 ## Last Validation
 
