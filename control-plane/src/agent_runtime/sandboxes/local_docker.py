@@ -37,11 +37,12 @@ class LocalContainerBackend(SandboxBackend):
         )
 
     def _hardened_args(self, sandbox, request, volume: str) -> list[str]:
+        network = "agent-runtime-local-allow" if request.runtime_profile == "local-allow" else "none"
         args = [
             "--name",
             self._container_name(sandbox),
             "--network",
-            "none",
+            network,
             "--read-only",
             "--cap-drop",
             "ALL",
