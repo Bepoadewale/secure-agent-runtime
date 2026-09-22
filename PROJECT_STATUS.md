@@ -2,9 +2,7 @@
 
 ## Current Maturity
 
-LOCAL END-TO-END VALIDATED
-
-`PORTFOLIO COMPLETE — LOCAL-FIRST SCOPE` requires the required PR CI checks to finish green. No other local-first completion blocker is known.
+PORTFOLIO COMPLETE — LOCAL-FIRST SCOPE
 
 ## Executed and Verified
 
@@ -32,15 +30,15 @@ LOCAL END-TO-END VALIDATED
 
 ## Known Failures
 
-- GitHub Actions for the latest PR revision are pending. No local validation failure is known.
+- None known in the local-first scope.
 
 ## Current P0 Objective
 
-Obtain green required CI for PR #4, then perform the final documentation/PR evidence review before promotion.
+Maintain the validated local demo and keep production adapters explicitly unexecuted until they are actually exercised.
 
 ## Completion Blockers
 
-- Required CI checks for the final PR revision must pass.
+- None for the local-first scope.
 
 ## Explicitly Unexecuted Production Adapters
 
@@ -53,10 +51,11 @@ Obtain green required CI for PR #4, then perform the final documentation/PR evid
 - `RUN_DOCKER_INTEGRATION=1 PYTHONPATH=control-plane/src .venv/bin/python -m pytest -q`: 18 passed.
 - `make demo-api`, `make demo-agent-task`, `make demo-containment`, `make demo-security-real`, `make demo-timeout`, `make demo-cancel`, `make demo-recovery`, and `make demo-observability`: passed.
 - Two clean-room bootstrap/demo/cleanup cycles: passed; details in `docs/VALIDATION.md`.
+- GitHub Actions `test`, `supply-chain`, and `local-e2e`: passed for PR #4 (runs `35775377997` and `35775384612`).
 
 ## Last Updated
 
-2026-09-22, implementation evidence through `1f18f2c` on `codex/week-04-secure-agent-runtime`.
+2026-09-22, implementation evidence through `7c1eb2b` on `codex/week-04-secure-agent-runtime`.
 
 ## Clean-Room Reproducibility
 

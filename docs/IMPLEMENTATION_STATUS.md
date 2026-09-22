@@ -15,4 +15,4 @@
 | Production Kubernetes sandbox jobs | 📐 ARCHITECTURE / CONTRACT ONLY | kind validates only the hardened control-plane API |
 | Enterprise OIDC and secret manager | 📋 ROADMAP | local synthetic fixtures only |
 
-The final local-first promotion remains contingent on green GitHub Actions for the final PR revision.
+GitHub Actions `test`, `supply-chain`, and Docker-backed `local-e2e` are green for the final PR revision.

@@ -13,7 +13,7 @@
 - [x] Prometheus metrics and OTLP traces are observable in local services.
 - [x] Reproducible demos, unit/security/integration tests, container build, Helm lint, and audit validation execute locally.
 - [x] Documentation distinguishes hardened Docker execution from unexecuted gVisor/Firecracker/Kubernetes sandbox execution.
-- [ ] Required GitHub Actions checks are green for the final PR revision.
+- [x] Required GitHub Actions checks are green for the final PR revision.
 
 ## Maturity Levels
 

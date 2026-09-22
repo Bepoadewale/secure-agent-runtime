@@ -4,13 +4,13 @@ PORTFOLIO COMPLETE — LOCAL-FIRST SCOPE
 
 # Current Completion Blockers
 
-- [ ] Required CI checks for the final Week 4 PR pass and the PR evidence is reviewed.
+- None in the local-first scope. Preserve the evidence boundary in future work.
 
 # P0 — Required for Portfolio Claim
 
 P0 blocks `PORTFOLIO COMPLETE — LOCAL-FIRST SCOPE`. Do not select P1/P2 polish while an item remains.
 
-- [ ] Confirm green CI and reconcile the final PR/README claims with its executed evidence.
+- [x] Confirm green CI and reconcile the final PR/README claims with its executed evidence.
 
 # P1 — Production Hardening
 
