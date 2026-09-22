@@ -3,9 +3,11 @@ from time import perf_counter
 from agent_runtime.artifacts.store import ArtifactStore
 from agent_runtime.models.domain import Sandbox, Task, TaskEvent, TaskRequest, TaskState
 from agent_runtime.observability.metrics import ACTIVE, DENIALS, EXECUTION, SECRETS, TASKS
+from agent_runtime.observability.tracing import force_flush
 from agent_runtime.policy.engine import PolicyEngine
 from agent_runtime.secrets.broker import SecretBroker
 from agent_runtime.state.store import RuntimeStateStore
+from opentelemetry import trace
 
 
 class TaskService:
@@ -90,7 +92,18 @@ class TaskService:
             ACTIVE.inc()
             start = perf_counter()
             self.event(task, "COMMAND_STARTED", task.request.agent_id)
-            result = self.backend.execute(sandbox, task.request)
+            with trace.get_tracer("secure-agent-runtime").start_as_current_span(
+                "sandbox.execute",
+                attributes={
+                    "agent_runtime.task_id": str(task.id),
+                    "agent_runtime.tenant": task.request.tenant_id,
+                    "agent_runtime.profile": task.request.runtime_profile,
+                },
+            ) as span:
+                result = self.backend.execute(sandbox, task.request)
+                span.set_attribute("agent_runtime.exit_code", result.exit_code)
+                span.set_attribute("agent_runtime.timed_out", result.timed_out)
+            force_flush()
             EXECUTION.observe(perf_counter() - start)
             task.stdout = self.secrets.redact(result.stdout)
             task.stderr = self.secrets.redact(result.stderr)

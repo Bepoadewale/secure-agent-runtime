@@ -3,11 +3,12 @@ set -euo pipefail
 
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 
-containers=$(docker ps -aq --filter 'name=^agent-runtime-')
+docker compose -f "${repo_root}/docker-compose.observability.yml" down -v --remove-orphans >/dev/null 2>&1 || true
+containers=$(docker ps -aq --filter 'label=agent-runtime.managed=true')
 if [[ -n "${containers}" ]]; then
   docker rm -f ${containers} >/dev/null
 fi
-volumes=$(docker volume ls -q --filter 'name=^agent-runtime-workspace-')
+volumes=$(docker volume ls -q --filter 'label=agent-runtime.managed=true')
 if [[ -n "${volumes}" ]]; then
   docker volume rm -f ${volumes} >/dev/null
 fi

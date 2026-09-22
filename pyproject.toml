@@ -3,7 +3,7 @@ name = "secure-agent-runtime"
 version = "0.1.0"
 description = "Governed ephemeral execution runtime for untrusted AI agent code"
 requires-python = ">=3.12"
-dependencies = ["fastapi>=0.115,<1", "prometheus-client>=0.21,<1", "pydantic>=2.9,<3", "typer>=0.12,<1", "uvicorn[standard]>=0.30,<1"]
+dependencies = ["fastapi>=0.115,<1", "opentelemetry-api>=1.30,<2", "opentelemetry-sdk>=1.30,<2", "opentelemetry-exporter-otlp-proto-http>=1.30,<2", "prometheus-client>=0.21,<1", "pydantic>=2.9,<3", "typer>=0.12,<1", "uvicorn[standard]>=0.30,<1"]
 [project.optional-dependencies]
 dev = ["httpx>=0.28,<1", "pip-audit>=2.8,<3", "pytest>=9.0.3,<10", "ruff>=0.8,<1"]
 [project.scripts]

@@ -1,4 +1,4 @@
-.PHONY: install test lint audit run demo demo-security build-sandbox bootstrap-local smoke demo-agent-task demo-api demo-containment demo-security-real demo-recovery verify clean-local destroy-local helm-lint dashboards
+.PHONY: install test lint audit run demo demo-security build-sandbox bootstrap-local smoke demo-agent-task demo-api demo-containment demo-security-real demo-recovery observability-up observability-down demo-observability verify clean-local destroy-local helm-lint dashboards
 PYTHON ?= python3.12
 VENV := .venv
 PY := $(VENV)/bin/python
@@ -40,6 +40,12 @@ demo-security-real:
 	PYTHONPATH=control-plane/src $(PY) scripts/demo-security-real.py
 demo-recovery:
 	PYTHONPATH=control-plane/src $(PY) scripts/demo-recovery.py
+observability-up:
+	docker compose -f docker-compose.observability.yml up -d
+observability-down:
+	docker compose -f docker-compose.observability.yml down -v --remove-orphans
+demo-observability: observability-up
+	PYTHONPATH=control-plane/src $(PY) scripts/demo-observability.py
 verify:
 	$(MAKE) lint
 	$(MAKE) test
