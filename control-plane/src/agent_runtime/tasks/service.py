@@ -67,6 +67,13 @@ class TaskService:
             SECRETS.labels("issued").inc() if issued else None
             self.event(task, "SECRET_ISSUED", "service:secret-broker") if issued else None
             self.backend.create(sandbox, task.request, issued)
+            if hasattr(self.backend, "hardening_evidence"):
+                self.event(
+                    task,
+                    "SANDBOX_HARDENING_VERIFIED",
+                    "service:provisioner",
+                    **self.backend.hardening_evidence(sandbox),
+                )
             sandbox.state = "RUNNING"
             task.state = TaskState.RUNNING
             ACTIVE.inc()
@@ -96,6 +103,21 @@ class TaskService:
                 task.request.limits.artifact_bytes,
             )
             self.event(task, "ARTIFACT_CREATED", "service:artifacts", artifact_id=str(artifact.id))
+            if hasattr(self.backend, "collect_patch"):
+                patch = self.backend.collect_patch(sandbox, task.request.limits.artifact_bytes)
+                patch_artifact = self.artifacts.put(
+                    task.id,
+                    task.request.tenant_id,
+                    "workspace.patch",
+                    patch,
+                    task.request.limits.artifact_bytes,
+                )
+                self.event(
+                    task,
+                    "PATCH_ARTIFACT_CREATED",
+                    "service:artifacts",
+                    artifact_id=str(patch_artifact.id),
+                )
             TASKS.labels(task.request.tenant_id, task.state.value).inc()
         finally:
             task.state = TaskState.TERMINATING
