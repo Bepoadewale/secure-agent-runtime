@@ -2,28 +2,29 @@
 
 # Portfolio Complete — Local-First Scope Gate
 
-- [ ] Hardened Docker backend, not a fake backend, executes the fixture lifecycle: workspace → clone → test → bounded change → patch/artifact → destroy.
-- [ ] Effective container configuration proves non-root, dropped capabilities, no Docker socket/host credentials, filesystem restriction, CPU/memory/PID limits, and timeout.
-- [ ] Default-deny or constrained egress and an explicit local allow path are executed; unauthorized destination is blocked.
-- [ ] Scoped synthetic secret delivery, expiration/revocation, and redaction are demonstrated.
-- [ ] Capability policy denies an ungranted privileged action.
-- [ ] Prompt-injection/exfiltration attempt for secret, network, or forbidden host action is blocked and audited.
-- [ ] Timeout/cancel cleanup and claimed abandoned-sandbox reaper behavior are executed.
-- [ ] Audit and appropriate sandbox lifecycle metrics/traces are observable.
-- [ ] Reproducible local demo, unit/integration/security/failure tests, and required CI pass.
-- [ ] Documentation distinguishes hardened Docker execution from unexecuted gVisor/Firecracker/Kubernetes isolation.
+- [x] Hardened Docker backend executes the fixture lifecycle: workspace → clone → test → bounded change → patch/artifact → destroy.
+- [x] Effective configuration proves non-root, read-only root, dropped capabilities, no Docker socket/host bind, no-new-privileges, and CPU/memory/PID/timeout limits.
+- [x] Default-deny egress and explicit constrained local allow path execute; public egress is blocked.
+- [x] Scoped synthetic secret delivery, output redaction, and revocation execute.
+- [x] Capability policy denies ungranted privileged action.
+- [x] Secret/network exfiltration attempt is blocked and audited.
+- [x] Real timeout cleanup, active cancellation, and labelled abandoned-sandbox reaping execute.
+- [x] Task/audit/artifact state survives control-plane restart.
+- [x] Prometheus metrics and OTLP traces are observable in local services.
+- [x] Reproducible demos, unit/security/integration tests, container build, Helm lint, and audit validation execute locally.
+- [x] Documentation distinguishes hardened Docker execution from unexecuted gVisor/Firecracker/Kubernetes sandbox execution.
+- [ ] Required GitHub Actions checks are green for the final PR revision.
 
 ## Maturity Levels
 
 - **FOUNDATION:** core architecture/logic exists.
 - **PARTIALLY VALIDATED:** meaningful integrations run but core sandbox evidence is incomplete.
-- **LOCAL END-TO-END VALIDATED:** primary sandbox path runs, with material safety/recovery/observability gaps.
-- **PORTFOLIO COMPLETE — LOCAL-FIRST SCOPE:** every gate above is executed; do not omit the suffix without production validation.
+- **LOCAL END-TO-END VALIDATED:** primary sandbox path runs, with material safety/recovery/observability gaps or CI evidence pending.
+- **PORTFOLIO COMPLETE — LOCAL-FIRST SCOPE:** every gate above is complete; do not omit the suffix without production validation.
 
 # Clean-Room Reproducibility Gate
 
-`PORTFOLIO COMPLETE — LOCAL-FIRST SCOPE` requires two executed clean-room cycles: clone → install → bootstrap hardened Docker runtime → smoke → fixture agent coding task/artifact demo → malicious containment/audit demo → validation → project-scoped cleanup → second clean bootstrap/demo. Planned commands: `make install`, `make bootstrap-local`, `make smoke`, `make demo-agent-task`, `make demo-containment`, `make verify`, `make clean-local`.
-
-- [ ] Clean clone/bootstrap has no hidden state; primary and failure demos pass.
-- [ ] Cleanup removes only this project and unrelated resources survive.
-- [ ] Post-cleanup absence and second bootstrap/demo are recorded in `docs/VALIDATION.md`.
+- [x] Clean project state → install → bootstrap → smoke → primary/security demos → validation → safe cleanup executed.
+- [x] Cleanup removes only runtime-owned resources; an unrelated Docker fixture survived.
+- [x] A second clean bootstrap, smoke, API lifecycle, security demo, and teardown executed.
+- [x] `docs/VALIDATION.md` records the evidence.

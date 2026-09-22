@@ -2,59 +2,64 @@
 
 ## Current Maturity
 
-PARTIALLY VALIDATED
+LOCAL END-TO-END VALIDATED
 
-## Maturity Model
-
-`FOUNDATION` → `PARTIALLY VALIDATED` → `LOCAL END-TO-END VALIDATED` → `PORTFOLIO COMPLETE — LOCAL-FIRST SCOPE`.
+`PORTFOLIO COMPLETE — LOCAL-FIRST SCOPE` requires the required PR CI checks to finish green. No other local-first completion blocker is known.
 
 ## Executed and Verified
 
-- Fake-backend task lifecycle and security policy tests.
+- Signed HS256 local JWT validation with expiry, issuer/audience, tenant, role, and agent-subject binding.
+- FastAPI task API → policy → hardened Docker fixture lifecycle → patch/log artifacts → API restart recovery.
+- Docker effective configuration: uid/gid `65532`, read-only root, dropped capabilities, no-new-privileges, PID/memory/CPU bounds, no Docker socket, and no host bind mount.
+- Public egress denial plus an explicit internal-network fixture allow path.
+- Secret-capability denial, synthetic-secret redaction/revocation, real timeout cleanup, active cancellation, and labelled orphan reaping.
+- SQLite durability for tasks, audit events, and artifacts across control-plane restart.
+- kind Helm deployment of the hardened control-plane API and readiness smoke check.
+- OTel Collector → Jaeger trace and Prometheus/Grafana local observability stack.
+- Two clean-room cycles, including project-scoped teardown and survival of an unrelated Docker fixture.
 
 ## Implemented but Not End-to-End Validated
 
-- Hardened Docker backend configuration, secret broker, artifacts and metrics.
+- None in the local-first core path.
 
 ## Simulated
 
-- Current lifecycle backend in test/demo.
+- Synthetic short-lived secret value only; no production secret manager was used.
 
 ## Architecture / Contracts Only
 
-- gVisor/Firecracker and Kubernetes execution.
+- gVisor, Firecracker, and production Kubernetes sandbox execution.
 
 ## Known Failures
 
-- GitHub CI rerun pending after replacing an invalid Trivy action tag and remediating the audited pytest advisory.
+- GitHub Actions for the latest PR revision are pending. No local validation failure is known.
 
 ## Current P0 Objective
 
-Execute an agent task in the hardened Docker backend and verify containment/cleanup.
+Obtain green required CI for PR #4, then perform the final documentation/PR evidence review before promotion.
 
 ## Completion Blockers
 
-- Hardened Docker execution, real fixture task, containment, network policy, secret broker, and lifecycle cleanup have not executed.
-- Exfiltration/injection, audit persistence, timeout/reaper recovery, and runtime observability need live evidence.
+- Required CI checks for the final PR revision must pass.
 
 ## Explicitly Unexecuted Production Adapters
 
-- gVisor, Firecracker, production Kubernetes isolation, and enterprise secret systems.
+- Enterprise OIDC/JWKS, managed secret broker, gVisor, Firecracker, production Kubernetes job execution, and cloud-scale runtime scheduling.
 
 ## Last Validation
 
-- `PYTHONPATH=control-plane/src ../ai-platform-control-plane/.venv/bin/python -m pytest -q`: 8 passed.
-- `../ai-platform-control-plane/.venv/bin/python -m ruff check control-plane/src control-plane/tests`: passed.
+- `make lint`: passed.
+- `make test`: 17 passed, 1 Docker integration skipped by default.
+- `RUN_DOCKER_INTEGRATION=1 PYTHONPATH=control-plane/src .venv/bin/python -m pytest -q`: 18 passed.
+- `make demo-api`, `make demo-agent-task`, `make demo-containment`, `make demo-security-real`, `make demo-timeout`, `make demo-cancel`, `make demo-recovery`, and `make demo-observability`: passed.
+- Two clean-room bootstrap/demo/cleanup cycles: passed; details in `docs/VALIDATION.md`.
 
 ## Last Updated
 
-2026-09-19, baseline `2c2ad1a`.
+2026-09-22, implementation evidence through `1f18f2c` on `codex/week-04-secure-agent-runtime`.
 
 ## Clean-Room Reproducibility
 
-**Status: NOT YET VALIDATED**
+**Status: VALIDATED**
 
-Completion requires two executed clean-room cycles: clean start → bootstrap → smoke → primary demo
-→ failure/security demo → validation → project-scoped cleanup, followed by a second clean bootstrap
-and demo. Existing developer state is not evidence. This status must be `VALIDATED` before
-`PORTFOLIO COMPLETE — LOCAL-FIRST SCOPE` is allowed.
+Two clean starts successfully completed bootstrap, smoke, primary/security demos, validation, safe teardown, and a second bootstrap/demo. The teardown was checked against an unrelated Docker fixture, which survived.
