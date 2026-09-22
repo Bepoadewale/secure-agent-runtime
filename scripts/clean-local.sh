@@ -4,6 +4,7 @@ set -euo pipefail
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 
 docker compose -f "${repo_root}/docker-compose.observability.yml" down -v --remove-orphans >/dev/null 2>&1 || true
+docker rm -f agent-runtime-local-egress-fixture >/dev/null 2>&1 || true
 containers=$(docker ps -aq --filter 'label=agent-runtime.managed=true')
 if [[ -n "${containers}" ]]; then
   docker rm -f ${containers} >/dev/null

@@ -1,4 +1,4 @@
-.PHONY: install test lint audit run demo demo-security build-sandbox bootstrap-local smoke demo-agent-task demo-api demo-containment demo-security-real demo-failure demo-recovery observability-up observability-down demo-observability verify clean-local destroy-local helm-lint dashboards
+.PHONY: install test lint audit run demo demo-security build-sandbox bootstrap-local smoke demo-agent-task demo-api demo-containment demo-security-real demo-failure demo-timeout demo-cancel demo-recovery observability-up observability-down demo-observability verify clean-local destroy-local helm-lint dashboards
 PYTHON ?= python3.12
 VENV := .venv
 PY := $(VENV)/bin/python
@@ -39,6 +39,10 @@ demo-containment:
 demo-security-real:
 	PYTHONPATH=control-plane/src $(PY) scripts/demo-security-real.py
 demo-failure: demo-security-real
+demo-timeout:
+	PYTHONPATH=control-plane/src $(PY) scripts/demo-timeout.py
+demo-cancel:
+	PYTHONPATH=control-plane/src $(PY) scripts/demo-cancel.py
 demo-recovery:
 	PYTHONPATH=control-plane/src $(PY) scripts/demo-recovery.py
 observability-up:

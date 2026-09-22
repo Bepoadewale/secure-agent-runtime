@@ -108,7 +108,9 @@ class TaskService:
             task.stdout = self.secrets.redact(result.stdout)
             task.stderr = self.secrets.redact(result.stderr)
             task.exit_code = result.exit_code
-            if result.timed_out:
+            if task.state is TaskState.CANCELLED:
+                self.event(task, "COMMAND_CANCELLED", "service:worker")
+            elif result.timed_out:
                 task.state = TaskState.TIMED_OUT
                 self.event(task, "TASK_TIMEOUT", "service:worker")
             elif result.exit_code == 0:
@@ -127,7 +129,7 @@ class TaskService:
                 task.request.limits.artifact_bytes,
             )
             self.event(task, "ARTIFACT_CREATED", "service:artifacts", artifact_id=str(artifact.id))
-            if hasattr(self.backend, "collect_patch"):
+            if task.state is not TaskState.CANCELLED and hasattr(self.backend, "collect_patch"):
                 patch = self.backend.collect_patch(sandbox, task.request.limits.artifact_bytes)
                 patch_artifact = self.artifacts.put(
                     task.id,
@@ -163,5 +165,10 @@ class TaskService:
         task.state = TaskState.CANCELLED
         self.secrets.revoke_task(task.id)
         self.event(task, "TASK_CANCELLED", principal)
+        if task.sandbox_id:
+            sandbox = self.sandboxes.get(str(task.sandbox_id))
+            if sandbox:
+                self.backend.destroy(sandbox)
+                self.event(task, "SANDBOX_CANCEL_REQUESTED", principal, sandbox_id=str(sandbox.id))
         self.save(task)
         return task
