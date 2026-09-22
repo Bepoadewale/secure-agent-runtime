@@ -71,7 +71,17 @@ class LocalContainerBackend(SandboxBackend):
         self.secrets = secrets
         volume = self._volume_name(sandbox)
         self.volumes[str(sandbox.id)] = volume
-        self._run(["volume", "create", volume])
+        self._run(
+            [
+                "volume",
+                "create",
+                "--label",
+                "agent-runtime.managed=true",
+                "--label",
+                f"agent-runtime.sandbox={sandbox.id}",
+                volume,
+            ]
+        )
         try:
             # Docker creates a fresh volume as root. This trusted one-shot setup
             # container only changes its ownership; it does not run task input.
@@ -119,6 +129,10 @@ class LocalContainerBackend(SandboxBackend):
             self._run(
                 [
                     "create",
+                    "--label",
+                    "agent-runtime.managed=true",
+                    "--label",
+                    f"agent-runtime.sandbox={sandbox.id}",
                     *self._hardened_args(sandbox, request, volume),
                     self.image,
                     *request.command,
@@ -200,3 +214,21 @@ class LocalContainerBackend(SandboxBackend):
         self._run(["rm", "-f", self._container_name(sandbox)], check=False)
         volume = self.volumes.pop(str(sandbox.id), self._volume_name(sandbox))
         self._run(["volume", "rm", "-f", volume], check=False)
+
+    def reap_orphans(self) -> dict[str, int]:
+        """Remove only abandoned resources labelled as runtime-owned.
+
+        The reaper deliberately filters by an ownership label rather than a
+        name prefix so it cannot affect unrelated Docker workloads.
+        """
+        containers = self._run(
+            ["ps", "-aq", "--filter", "label=agent-runtime.managed=true"], check=False
+        ).stdout.split()
+        volumes = self._run(
+            ["volume", "ls", "-q", "--filter", "label=agent-runtime.managed=true"], check=False
+        ).stdout.split()
+        for container in containers:
+            self._run(["rm", "-f", container], check=False)
+        for volume in volumes:
+            self._run(["volume", "rm", "-f", volume], check=False)
+        return {"containers": len(containers), "volumes": len(volumes)}
