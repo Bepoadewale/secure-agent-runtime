@@ -55,7 +55,7 @@ Maintain the validated local demo and keep production adapters explicitly unexec
 
 ## Last Updated
 
-2026-09-22, implementation evidence through `7c1eb2b` on `codex/week-04-secure-agent-runtime`.
+2026-09-22, implementation and documentation evidence through `db906d8` on `codex/week-04-secure-agent-runtime`.
 
 ## Clean-Room Reproducibility
 
