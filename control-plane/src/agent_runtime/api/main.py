@@ -3,13 +3,14 @@ from uuid import UUID
 from agent_runtime.auth.dependencies import admin, principal
 from agent_runtime.models.domain import TaskRequest
 from agent_runtime.sandboxes.local_docker import LocalContainerBackend
+from agent_runtime.state.store import RuntimeStateStore
 from agent_runtime.tasks.service import TaskService
 from fastapi import Depends, FastAPI, HTTPException
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 from starlette.responses import Response
 
 app = FastAPI(title="Secure Agent Runtime", version="0.1.0")
-service = TaskService(LocalContainerBackend())
+service = TaskService(LocalContainerBackend(), RuntimeStateStore())
 
 
 @app.get("/healthz")
