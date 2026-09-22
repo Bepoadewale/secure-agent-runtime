@@ -22,3 +22,14 @@ jobs:
         with: {scan-type: fs, scan-ref: ., severity: HIGH,CRITICAL, exit-code: "1"}
       - uses: anchore/sbom-action@v0
         with: {path: ., format: spdx-json}
+  local-e2e:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: make install && make build-sandbox
+      - run: RUN_DOCKER_INTEGRATION=1 PYTHONPATH=control-plane/src .venv/bin/python -m pytest -q
+      - run: make demo-agent-task && make demo-containment && make demo-security-real
+      - if: always()
+        run: make clean-local
