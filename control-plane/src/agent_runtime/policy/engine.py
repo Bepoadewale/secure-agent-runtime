@@ -19,6 +19,8 @@ class PolicyEngine:
         else:
             if not request.capabilities <= profile.allowed_capabilities:
                 reasons.append("requested capability is not granted by runtime profile")
+            if request.secret_requests and Capability.SECRET_TEST_EPHEMERAL not in request.capabilities:
+                reasons.append("secret request requires secret.test.ephemeral capability")
             if Capability.GIT_PUSH in request.capabilities:
                 reasons.append("git.push is denied in all default profiles")
             if request.limits.timeout_seconds > profile.limits.timeout_seconds:

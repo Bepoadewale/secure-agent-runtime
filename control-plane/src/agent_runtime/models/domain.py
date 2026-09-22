@@ -92,6 +92,17 @@ PROFILES = {
         },
         limits=ResourceLimits(),
     ),
+    "restricted-secret-test": RuntimeProfile(
+        name="restricted-secret-test",
+        network="offline",
+        allowed_capabilities={
+            Capability.FILESYSTEM_READ,
+            Capability.PROCESS_EXECUTE,
+            Capability.ARTIFACT_UPLOAD,
+            Capability.SECRET_TEST_EPHEMERAL,
+        },
+        limits=ResourceLimits(),
+    ),
     "gvisor-required": RuntimeProfile(
         name="gvisor-required",
         network="offline",

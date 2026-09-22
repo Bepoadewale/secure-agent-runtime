@@ -1,4 +1,4 @@
-.PHONY: install test lint audit run demo demo-security build-sandbox bootstrap-local smoke demo-agent-task demo-containment verify clean-local destroy-local helm-lint dashboards
+.PHONY: install test lint audit run demo demo-security build-sandbox bootstrap-local smoke demo-agent-task demo-containment demo-security-real verify clean-local destroy-local helm-lint dashboards
 PYTHON ?= python3.12
 VENV := .venv
 PY := $(VENV)/bin/python
@@ -34,6 +34,8 @@ demo-agent-task:
 	PYTHONPATH=control-plane/src $(PY) scripts/demo-agent-task.py
 demo-containment:
 	PYTHONPATH=control-plane/src $(PY) scripts/demo-containment.py
+demo-security-real:
+	PYTHONPATH=control-plane/src $(PY) scripts/demo-security-real.py
 verify:
 	$(MAKE) lint
 	$(MAKE) test
