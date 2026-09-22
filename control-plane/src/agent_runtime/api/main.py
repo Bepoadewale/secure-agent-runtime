@@ -2,14 +2,17 @@ from uuid import UUID
 
 from agent_runtime.auth.dependencies import admin, principal
 from agent_runtime.models.domain import TaskRequest
+from agent_runtime.observability.tracing import configure_tracing
 from agent_runtime.sandboxes.local_docker import LocalContainerBackend
+from agent_runtime.state.store import RuntimeStateStore
 from agent_runtime.tasks.service import TaskService
 from fastapi import Depends, FastAPI, HTTPException
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 from starlette.responses import Response
 
+configure_tracing()
 app = FastAPI(title="Secure Agent Runtime", version="0.1.0")
-service = TaskService(LocalContainerBackend())
+service = TaskService(LocalContainerBackend(), RuntimeStateStore())
 
 
 @app.get("/healthz")
@@ -24,15 +27,17 @@ def metrics():
 
 @app.post("/api/v1/tasks", status_code=202)
 def create_task(request: TaskRequest, who=Depends(principal)):
-    if who[0] != request.tenant_id:
+    if who.tenant_id != request.tenant_id:
         raise HTTPException(403, "tenant identity mismatch")
+    if who.principal_type == "agent" and who.subject != request.agent_id:
+        raise HTTPException(403, "agent identity mismatch")
     return service.submit(request)
 
 
 @app.post("/api/v1/tasks/{task_id}/run")
 def run_task(task_id: UUID, who=Depends(principal)):
     task = service.tasks.get(str(task_id))
-    if not task or task.request.tenant_id != who[0]:
+    if not task or task.request.tenant_id != who.tenant_id:
         raise HTTPException(404, "task not found")
     return service.run(str(task_id))
 
@@ -40,7 +45,7 @@ def run_task(task_id: UUID, who=Depends(principal)):
 @app.get("/api/v1/tasks/{task_id}")
 def get_task(task_id: UUID, who=Depends(principal)):
     task = service.tasks.get(str(task_id))
-    if not task or task.request.tenant_id != who[0]:
+    if not task or task.request.tenant_id != who.tenant_id:
         raise HTTPException(404, "task not found")
     return task
 
@@ -48,7 +53,7 @@ def get_task(task_id: UUID, who=Depends(principal)):
 @app.post("/api/v1/tasks/{task_id}/cancel")
 def cancel(task_id: UUID, who=Depends(principal)):
     task = service.tasks.get(str(task_id))
-    if not task or task.request.tenant_id != who[0]:
+    if not task or task.request.tenant_id != who.tenant_id:
         raise HTTPException(404, "task not found")
     return service.cancel(str(task_id), who[1])
 
@@ -62,7 +67,7 @@ def events(task_id: UUID, who=Depends(principal)):
 @app.get("/api/v1/tasks/{task_id}/artifacts")
 def artifacts(task_id: UUID, who=Depends(principal)):
     task = get_task(task_id, who)
-    return service.artifacts.list(task.id, who[0])
+    return service.artifacts.list(task.id, who.tenant_id)
 
 
 @app.get("/api/v1/sandboxes/{sandbox_id}")

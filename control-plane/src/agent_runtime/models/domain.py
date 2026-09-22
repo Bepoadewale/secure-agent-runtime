@@ -34,6 +34,7 @@ class Capability(StrEnum):
     ARTIFACT_UPLOAD = "artifact.upload"
     SECRET_TEST_EPHEMERAL = "secret.test.ephemeral"
     NETWORK_PYPI = "network.pypi"
+    NETWORK_LOCAL_FIXTURE = "network.local-fixture"
     GIT_PUSH = "git.push"
 
 
@@ -78,6 +79,29 @@ PROFILES = {
             Capability.ARTIFACT_UPLOAD,
         },
         limits=ResourceLimits(timeout_seconds=600),
+    ),
+    "local-allow": RuntimeProfile(
+        name="local-allow",
+        network="local-fixture-only",
+        allowed_capabilities={
+            Capability.FILESYSTEM_READ,
+            Capability.FILESYSTEM_WRITE,
+            Capability.PROCESS_EXECUTE,
+            Capability.ARTIFACT_UPLOAD,
+            Capability.NETWORK_LOCAL_FIXTURE,
+        },
+        limits=ResourceLimits(),
+    ),
+    "restricted-secret-test": RuntimeProfile(
+        name="restricted-secret-test",
+        network="offline",
+        allowed_capabilities={
+            Capability.FILESYSTEM_READ,
+            Capability.PROCESS_EXECUTE,
+            Capability.ARTIFACT_UPLOAD,
+            Capability.SECRET_TEST_EPHEMERAL,
+        },
+        limits=ResourceLimits(),
     ),
     "gvisor-required": RuntimeProfile(
         name="gvisor-required",

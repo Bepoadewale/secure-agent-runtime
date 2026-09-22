@@ -17,9 +17,24 @@ spec:
       containers:
         - name: api
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           securityContext: {runAsNonRoot: true, readOnlyRootFilesystem: true, allowPrivilegeEscalation: false, capabilities: {drop: ["ALL"]}}
+          env:
+            - {name: PYTHONDONTWRITEBYTECODE, value: "1"}
+            - {name: AGENT_RUNTIME_DB, value: "/tmp/runtime.db"}
           resources: {{- toYaml .Values.resources | nindent 12 }}
           ports: [{containerPort: 8000}]
+          readinessProbe: {httpGet: {path: /healthz, port: 8000}, initialDelaySeconds: 3}
+          livenessProbe: {httpGet: {path: /healthz, port: 8000}, initialDelaySeconds: 5}
+          volumeMounts: [{name: runtime-state, mountPath: /tmp}]
+      volumes: [{name: runtime-state, emptyDir: {}}]
+---
+apiVersion: v1
+kind: Service
+metadata: {name: agent-runtime-control-plane}
+spec:
+  selector: {app: agent-runtime-control-plane}
+  ports: [{name: http, port: 8000, targetPort: 8000}]
 ---
 apiVersion: v1
 kind: ResourceQuota
