@@ -1,4 +1,4 @@
-.PHONY: install test lint audit run demo demo-security build-sandbox bootstrap-local smoke demo-agent-task demo-api demo-containment demo-security-real demo-recovery observability-up observability-down demo-observability verify clean-local destroy-local helm-lint dashboards
+.PHONY: install test lint audit run demo demo-security build-sandbox bootstrap-local smoke demo-agent-task demo-api demo-containment demo-security-real demo-failure demo-recovery observability-up observability-down demo-observability verify clean-local destroy-local helm-lint dashboards
 PYTHON ?= python3.12
 VENV := .venv
 PY := $(VENV)/bin/python
@@ -38,6 +38,7 @@ demo-containment:
 	PYTHONPATH=control-plane/src $(PY) scripts/demo-containment.py
 demo-security-real:
 	PYTHONPATH=control-plane/src $(PY) scripts/demo-security-real.py
+demo-failure: demo-security-real
 demo-recovery:
 	PYTHONPATH=control-plane/src $(PY) scripts/demo-recovery.py
 observability-up:
@@ -50,7 +51,9 @@ verify:
 	$(MAKE) lint
 	$(MAKE) test
 	$(MAKE) audit
-	docker build -t agent-runtime-sandbox:local -f sandbox/images/Dockerfile .
+	$(MAKE) helm-lint
+	$(MAKE) build-sandbox
+	RUN_DOCKER_INTEGRATION=1 PYTHONPATH=control-plane/src $(PY) -m pytest -q
 clean-local:
 	./scripts/clean-local.sh
 destroy-local:

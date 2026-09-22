@@ -78,6 +78,8 @@ class LocalContainerBackend(SandboxBackend):
                 "--label",
                 "agent-runtime.managed=true",
                 "--label",
+                "agent-runtime.resource=sandbox",
+                "--label",
                 f"agent-runtime.sandbox={sandbox.id}",
                 volume,
             ]
@@ -131,6 +133,8 @@ class LocalContainerBackend(SandboxBackend):
                     "create",
                     "--label",
                     "agent-runtime.managed=true",
+                    "--label",
+                    "agent-runtime.resource=sandbox",
                     "--label",
                     f"agent-runtime.sandbox={sandbox.id}",
                     *self._hardened_args(sandbox, request, volume),
@@ -222,10 +226,10 @@ class LocalContainerBackend(SandboxBackend):
         name prefix so it cannot affect unrelated Docker workloads.
         """
         containers = self._run(
-            ["ps", "-aq", "--filter", "label=agent-runtime.managed=true"], check=False
+            ["ps", "-aq", "--filter", "label=agent-runtime.resource=sandbox"], check=False
         ).stdout.split()
         volumes = self._run(
-            ["volume", "ls", "-q", "--filter", "label=agent-runtime.managed=true"], check=False
+            ["volume", "ls", "-q", "--filter", "label=agent-runtime.resource=sandbox"], check=False
         ).stdout.split()
         for container in containers:
             self._run(["rm", "-f", container], check=False)
