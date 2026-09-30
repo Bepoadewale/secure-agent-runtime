@@ -61,3 +61,7 @@ make clean-local
 - A slow command hits its enforced runtime timeout; an active command can be cancelled; a labelled abandoned sandbox is reaped without touching unrelated Docker resources.
 
 See [architecture](docs/architecture.md), [local development](docs/local-development.md), [security model](docs/security-model.md), [observability](docs/observability.md), and [validation evidence](docs/VALIDATION.md).
+
+## Temporary public trace demo
+
+`make public-demo` boots the local runtime, runs its observability fixture, and prints a temporary Cloudflare Quick Tunnel URL for Jaeger. It uses no Cloudflare account, named tunnel, or persistent credential; the URL changes every run and must never be committed. It is public access to a disposable trace view, so share only during a controlled demonstration. `Ctrl-C` stops only the tunnel; `make clean-local` removes project-owned resources.
