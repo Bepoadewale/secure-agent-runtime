@@ -1,4 +1,4 @@
-.PHONY: install test lint audit run demo demo-security build-sandbox bootstrap-local smoke demo-agent-task demo-api demo-containment demo-security-real demo-failure demo-timeout demo-cancel demo-recovery observability-up observability-down demo-observability verify clean-local destroy-local helm-lint dashboards
+.PHONY: install test lint audit run demo demo-security build-sandbox bootstrap-local smoke demo-agent-task demo-api demo-containment demo-security-real demo-failure demo-timeout demo-cancel demo-recovery observability-up observability-down demo-observability verify clean-local destroy-local helm-lint dashboards public-demo
 PYTHON ?= python3.12
 VENV := .venv
 PY := $(VENV)/bin/python
@@ -66,3 +66,6 @@ helm-lint:
 	helm lint platform/helm/agent-runtime
 dashboards:
 	@echo 'Import dashboards/runtime.json into local Grafana after Prometheus is installed.'
+
+public-demo:
+	./scripts/start-public-demo.sh
