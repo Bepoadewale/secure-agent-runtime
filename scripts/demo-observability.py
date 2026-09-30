@@ -24,8 +24,12 @@ def call(url: str, method="GET", body=None, token=None):
     request = urllib.request.Request(
         url, data=json.dumps(body).encode() if body else None, method=method, headers=headers
     )
-    with urllib.request.urlopen(request, timeout=30) as response:
-        return json.loads(response.read())
+    try:
+        with urllib.request.urlopen(request, timeout=30) as response:
+            return json.loads(response.read())
+    except urllib.error.HTTPError as error:
+        detail = error.read().decode("utf-8", errors="replace")
+        raise RuntimeError(f"{method} {url} failed with HTTP {error.code}: {detail}") from error
 
 
 def wait(label, predicate):
@@ -46,13 +50,15 @@ database.unlink(missing_ok=True)
 environment = os.environ | {
     "AGENT_RUNTIME_DB": str(database),
     "OTEL_EXPORTER_OTLP_TRACES_ENDPOINT": "http://127.0.0.1:4318/v1/traces",
+    "PYTHONUNBUFFERED": "1",
 }
+api_log = (ROOT / ".local" / "observability-api.log").open("w")
 process = subprocess.Popen(
-    [".venv/bin/python", "-m", "uvicorn", "agent_runtime.api.main:app", "--port", "18080"],
+    [".venv/bin/python", "-u", "-m", "uvicorn", "agent_runtime.api.main:app", "--port", "18080", "--log-level", "debug"],
     cwd=ROOT,
     env=environment,
-    stdout=subprocess.DEVNULL,
-    stderr=subprocess.DEVNULL,
+    stdout=api_log,
+    stderr=subprocess.STDOUT,
 )
 token = issue_local_token("team-a", "agent:observability", ["task.submit"], "agent")
 try:
@@ -86,3 +92,4 @@ try:
 finally:
     process.terminate()
     process.wait(timeout=10)
+    api_log.close()

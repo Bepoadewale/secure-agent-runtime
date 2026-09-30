@@ -8,6 +8,7 @@ cleanup() { [[ -n "$tunnel_pid" ]] && kill "$tunnel_pid" 2>/dev/null || true; [[
 trap cleanup EXIT INT TERM
 if ! command -v cloudflared >/dev/null; then command -v brew >/dev/null || { echo "cloudflared is required; install it with Homebrew." >&2; exit 1; }; brew install cloudflared; fi
 cd "$root"
+make install
 make bootstrap-local
 make smoke
 make demo-observability
